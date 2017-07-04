@@ -4,6 +4,8 @@
       <root url="jar://D:/Information Extraction/PDFBox/pdfbox-2.0.6.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ideaLibSources/pdfbox-2.0.6-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

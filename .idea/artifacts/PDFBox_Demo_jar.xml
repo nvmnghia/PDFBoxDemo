@@ -1,0 +1,23 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PDFBox Demo:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/PDFBox_Demo_jar</output-path>
+    <root id="archive" name="PDFBox Demo.jar">
+      <element id="module-output" name="PDFBox Demo" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/pdfbox/fontbox/2.0.0/fontbox-2.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="D:/Information Extraction/PDFBox/fontbox-2.0.6.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/pdfbox/xmpbox/2.0.0/xmpbox-2.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="D:/lib/sqlite-jdbc-3.18.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/pdfbox/pdfbox-tools/2.0.0/pdfbox-tools-2.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="D:/Information Extraction/PDFBox/pdfbox-tools-2.0.6.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/pdfbox/preflight/2.0.0/preflight-2.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="D:/Information Extraction/PDFBox/pdfbox-2.0.6.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="D:/Information Extraction/PDFBox/preflight-2.0.6.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.8.1/gson-2.8.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/pdfbox/pdfbox-debugger/2.0.0/pdfbox-debugger-2.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/pdfbox/pdfbox/2.0.1/pdfbox-2.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/pdfbox/jempbox/1.8.11/jempbox-1.8.11.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.2/commons-logging-1.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="D:/Information Extraction/PDFBox/xmpbox-2.0.6.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
