@@ -12,7 +12,7 @@ import org.apache.pdfbox.text.TextPosition;
 public class StyledCharacter {
 
     private TextPosition style;
-    private boolean isBold;
+    private boolean isBold = false;
     private boolean isCapital;
 
     // Constructors

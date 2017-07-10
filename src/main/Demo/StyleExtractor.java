@@ -1,9 +1,7 @@
 package main.Demo;
 
-import com.sun.javafx.css.Style;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.apache.pdfbox.text.PDFTextStripperByArea;
 import org.apache.pdfbox.text.TextPosition;
 
 import java.io.IOException;
@@ -15,18 +13,17 @@ import java.util.Random;
  */
 
 public class StyleExtractor extends PDFTextStripper {
+
     private PDDocument document;
 
     private ArrayList<StyledCharacter> allStyledCharacters = new ArrayList<>();    // Stores the style of each character of the whole document
     private StyledWord[] allStyledWords;
     private ArrayList<StyledSentence> allStyledSentences = new ArrayList<>();
+    private ArrayList<StyledBlock> allStyledBlock = new ArrayList<>();
 
     private String text;
     private String[] words;
     private String title = "";
-
-    private float ignoreHeaderY;
-    private float ignoreFooterY;
 
     private float defaultFontSize;
 
@@ -53,28 +50,28 @@ public class StyleExtractor extends PDFTextStripper {
 
         setDefaultFontSize();
 
-        mapWordToSentence();
+        // mapWordToSentence();
 
-        // Experimental
-        // findHeaderFooter();
+        mapWordToBlock();
     }
 
-    private void findHeaderFooter() {
-       ignoreHeaderY = allStyledWords[0].getStyle().getY();    // The first letter read must belong to the header
-       ignoreFooterY = allStyledWords[allStyledWords.length - 1].getStyle().getY();    // The last letter read must belong to the footer
-    }
 
     public ArrayList<StyledCharacter> getAllStyledCharacters() {
         return allStyledCharacters;
     }
 
-    public ArrayList<StyledSentence> getAllStyledSentences() {
-        return allStyledSentences;
-    }
-
     public StyledWord[] getAllStyledWords() {
         return allStyledWords;
     }
+
+//    public ArrayList<StyledSentence> getAllStyledSentences() {
+//        return allStyledSentences;
+//    }
+
+    public ArrayList<StyledBlock> getAllStyledBlocks() {
+        return allStyledBlock;
+    }
+
 
     public String getText() {
         return text;
@@ -194,7 +191,7 @@ public class StyleExtractor extends PDFTextStripper {
         }
     }
 
-    private static String clearControlChar(String content) {
+    private String clearControlChar(String content) {
         String temp = content.replaceAll("\n|\t", " ");    // Replace all \n and ]t with only one space.
         // Space letter will later be used to split the whole content string into words
         temp = temp.replaceAll("[\\p{Cntrl}]", "");     // Remove all other control characters
@@ -218,5 +215,84 @@ public class StyleExtractor extends PDFTextStripper {
         }
 
         return clearedTemp;
+    }
+
+    private void mapWordToBlock() {
+        // Iterate through all words. At each word, examine its positionY
+        // to determine if the word is in the current block or in the next block
+
+        ArrayList<StyledWord> currentSentenceWords = new ArrayList<>();
+        ArrayList<StyledSentence> currentBlockSentences = new ArrayList<>();
+
+        // Initialize variables for the first line
+        float previousLine = allStyledWords[0].getStyle().getY();    // Words on the same line have positionX roughly equals to this value
+
+        // Assumption: lines has double spacing at most. This method of guessing line space is applied at the beginning of each block,
+        // as there is no way to know for sure the spacing of the block's line
+        float previousLineSpace = allStyledWords[0].getStyle().getHeightDir() * 2;    // Maximum height of all character in this string.
+
+        for (int i = 0; i < allStyledWords.length; i++) {
+            StyledWord currentWord = allStyledWords[i];
+
+            // Feed the approx() with 2 positionY
+            // The threshold value is used to avoid the fluctuation in the line. Furthermore it can group subscript/superscript into the current line
+            // Assumption: The distance from subscript/superscript to the current line is less than half of the maximum height of the line's characters
+            if (approx(currentWord.getStyle().getY(), previousLine, currentWord.getStyle().getHeightDir() / 2)) {    // Same line
+                currentSentenceWords.add(currentWord);
+
+                if (!currentWord.isBold() && (currentWord.getWord().endsWith(".") || currentWord.getWord().endsWith("?") || currentWord.getWord().endsWith("!"))) {    // Sentence ends, and it's not index!
+                    currentBlockSentences.add(new StyledSentence(currentSentenceWords));    // Ends completed sentence
+                    currentSentenceWords = new ArrayList<>();    // Prepare new sentence
+                }
+            } else {    // New line
+                float currentLine = currentWord.getStyle().getY();
+                float currentLineSpace = Math.abs(currentLine - previousLine);    // NOTE: The document is read downward AND the origin is the UPPER LEFT corner
+
+                if (approx(currentLineSpace, previousLineSpace, 2f)) {    // Same block, as the line spaces are roughly equal
+                    previousLine = currentLine;
+                    previousLineSpace = currentLineSpace;
+
+                    // IMPORTANT: To avoid copying and pasting a large amount of code to add words to sentence,
+                    // the previous 2 variables were updated and the word will be added in the next iteration.
+                    i--;
+
+//                    currentSentenceWords.add(currentWord);
+//
+//                    if (!currentWord.isBold() && (currentWord.getWord().endsWith(".") || currentWord.getWord().endsWith("?") || currentWord.getWord().endsWith("!"))) {    // Sentence ends, and it's not index!
+//                        currentBlockSentences.add(new StyledSentence(currentSentenceWords));    // Ends completed sentence
+//                        currentSentenceWords = new ArrayList<>();    // Prepare new sentence
+//                    }
+                } else {    // New block
+                    if (currentSentenceWords.size() != 0) {    // The previous sentence/paragraph didn't end correctly (eg title. No one puts ending punctuation in the title!)
+                        currentBlockSentences.add(new StyledSentence(currentSentenceWords));
+                        currentSentenceWords = new ArrayList<>();
+                    }
+
+                    allStyledBlock.add(new StyledBlock(currentBlockSentences));
+                    currentBlockSentences = new ArrayList<>();
+
+                    previousLine = currentLine;
+                    previousLineSpace = currentWord.getStyle().getHeightDir() * 2;
+
+                    i--;
+
+//                    currentSentenceWords.add(currentWord);
+//
+//                    if (!currentWord.isBold() && (currentWord.getWord().endsWith(".") || currentWord.getWord().endsWith("?") || currentWord.getWord().endsWith("!"))) {    // Sentence ends, and it's not index!
+//                        currentBlockSentences.add(new StyledSentence(currentSentenceWords));    // Ends completed sentence
+//                        currentSentenceWords = new ArrayList<>();    // Prepare new sentence
+//                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Check if the inputs a and b are roughly equal
+     *
+     * @return The boolean value of the operator
+     */
+    private boolean approx(float a, float b, float threshold) {
+        return Math.abs(a - b) < threshold;
     }
 }

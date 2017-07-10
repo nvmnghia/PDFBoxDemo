@@ -1,15 +1,10 @@
 package main.Demo;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.text.PDFTextStripper;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Created by nghia on 6/24/2017.
@@ -21,18 +16,18 @@ public class Test {
 
         StyleExtractor extractor = new StyleExtractor(document);
         String content = extractor.getText();
-        System.out.println("Content: " + content);
+        //System.out.println("Content: " + content);
 
-        System.out.println("\n__________________________________________________________________________\n");
-        System.out.println("Title: " + extractor.getTitle());
-
-        System.out.println("\n__________________________________________________________________________\n");
-        System.out.println("Sentences:");
-        ArrayList<StyledSentence> allStyledSentences = extractor.getAllStyledSentences();
-        for(int i = 0; i < allStyledSentences.size(); i++) {
-            System.out.println(allStyledSentences.get(i).getSentence());
-        }
-
+//        System.out.println("\n__________________________________________________________________________\n");
+//        System.out.println("Title: " + extractor.getTitle());
+//
+//        System.out.println("\n__________________________________________________________________________\n");
+//        System.out.println("Sentences:");
+//        ArrayList<StyledSentence> allStyledSentences = extractor.getAllStyledSentences();
+//        for(int i = 0; i < allStyledSentences.size(); i++) {
+//            System.out.println(allStyledSentences.get(i).getSentence());
+//        }
+//
 //        System.out.println("\n__________________________________________________________________________\n");
 //        System.out.println("word: ");
 //        StyledWord[] list = extractor.getAllStyledWords();
@@ -45,5 +40,22 @@ public class Test {
 //        }
 //
 //        PDPage page = document.getPage(0);
+
+        ArrayList<StyledBlock> allStyledBlocks = extractor.getAllStyledBlocks();
+        for (StyledBlock styledBlock : allStyledBlocks) {
+            System.out.println("Block: ");
+
+            ArrayList<StyledSentence> blockSentences = styledBlock.getAllStyledSentences();
+            for (StyledSentence styledSentence : blockSentences) {
+                System.out.print("Sentence: ");
+
+                ArrayList<StyledWord> sentenceWords = styledSentence.getStyledWords();
+                for (StyledWord styledWord : sentenceWords) {
+                    System.out.print(styledWord.getWord() + " ");
+                }
+                System.out.println("");
+            }
+            System.out.println("");
+        }
     }
 }

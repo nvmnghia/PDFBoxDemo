@@ -32,5 +32,6 @@
     <orderEntry type="library" name="Maven: org.apache.pdfbox:pdfbox-tools:2.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.pdfbox:pdfbox-debugger:2.0.0" level="project" />
     <orderEntry type="library" name="com.google.code.gson:gson:2.8.1" level="project" />
+    <orderEntry type="library" name="org.apache.tika:tika-app:1.15" level="project" />
   </component>
 </module>
